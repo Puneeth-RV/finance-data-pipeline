@@ -31,12 +31,12 @@ def prepare_ml_data(file_path):
     df.dropna(inplace=True)
     return df
 
-def run_ml_pipeline():
+def run_ml_pipeline(ticker="AAPL"):
     """
-    Runs a Random Forest Classifier on Apple (AAPL) stock as a demonstration.
+    Runs a Random Forest Classifier on the specified stock.
     """
-    print("\n--- Running Machine Learning Pipeline ---")
-    data_path = Path("data/raw/AAPL.csv")
+    print(f"\n--- Running Machine Learning Pipeline for {ticker} ---")
+    data_path = Path(f"data/raw/{ticker}.csv")
     if not data_path.exists():
          # Fallback to first file
          data_path = list(get_csv_files("data/raw"))[0]
@@ -55,17 +55,18 @@ def run_ml_pipeline():
     preds = model.predict(X_test)
     acc = accuracy_score(y_test, preds)
     print(f"Random Forest Accuracy on {data_path.stem}: {acc * 100:.2f}%")
-    return df, data_path.stem
+    return df, data_path.stem, acc
 
 def generate_visualizations(df, ticker_name):
     """
     Generates 2D/3D Matplotlib plots and an interactive Bokeh plot.
+    Returns the figures so they can be rendered in a frontend or saved.
     """
     print("\n--- Generating Visualizations ---")
     os.makedirs("visualizations", exist_ok=True)
     
     # 1. 2D Matplotlib Plot (Price and Moving Averages)
-    plt.figure(figsize=(10, 6))
+    fig2d = plt.figure(figsize=(10, 6))
     plt.plot(df['Date'], df['Close'], label='Close Price')
     plt.plot(df['Date'], df['MA_50'], label='50-Day MA')
     plt.title(f"{ticker_name} Price Trend")
@@ -73,11 +74,10 @@ def generate_visualizations(df, ticker_name):
     plt.ylabel("Price")
     plt.legend()
     plt.savefig(f"visualizations/{ticker_name}_2D_plot.png")
-    print(f"Saved 2D plot: visualizations/{ticker_name}_2D_plot.png")
     
     # 2. 3D Matplotlib Plot
-    fig = plt.figure(figsize=(10, 8))
-    ax = fig.add_subplot(111, projection='3d')
+    fig3d = plt.figure(figsize=(10, 8))
+    ax = fig3d.add_subplot(111, projection='3d')
     sc = ax.scatter(df['Daily_Return'], df['Volatility_10'], df['Volume'], c=df['Target'], cmap='coolwarm', alpha=0.6)
     ax.set_xlabel('Daily Return')
     ax.set_ylabel('10-Day Volatility')
@@ -85,7 +85,6 @@ def generate_visualizations(df, ticker_name):
     ax.set_title("3D Feature Scatter Plot (Red=Up, Blue=Down)")
     plt.colorbar(sc, ax=ax, label='Target (0 or 1)')
     plt.savefig(f"visualizations/{ticker_name}_3D_plot.png")
-    print(f"Saved 3D plot: visualizations/{ticker_name}_3D_plot.png")
     
     # 3. Interactive Bokeh Plot
     source = ColumnDataSource(df)
@@ -109,9 +108,11 @@ def generate_visualizations(df, ticker_name):
     
     output_file(f"visualizations/{ticker_name}_interactive.html")
     save(p)
-    print(f"Saved interactive plot: visualizations/{ticker_name}_interactive.html")
+    print(f"Saved visualizations to visualizations/ folder.")
+    
+    return fig2d, fig3d, p
 
 if __name__ == "__main__":
-    df, ticker = run_ml_pipeline()
+    df, ticker, acc = run_ml_pipeline()
     if df is not None:
          generate_visualizations(df, ticker)
