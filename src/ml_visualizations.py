@@ -87,7 +87,11 @@ def generate_visualizations(df, ticker_name):
     plt.savefig(f"visualizations/{ticker_name}_3D_plot.png")
     
     # 3. Interactive Bokeh Plot
-    source = ColumnDataSource(df)
+    # Bokeh sometimes fails to render timezone-aware datetimes in Streamlit
+    df_bokeh = df.copy()
+    if df_bokeh['Date'].dt.tz is not None:
+        df_bokeh['Date'] = df_bokeh['Date'].dt.tz_localize(None)
+    source = ColumnDataSource(df_bokeh)
     
     p = figure(x_axis_type="datetime", title=f"Interactive {ticker_name} Chart",
                width=800, height=400)
