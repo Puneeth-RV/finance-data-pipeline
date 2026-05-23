@@ -75,17 +75,19 @@ if st.button(f"Run Model on {selected_ticker}", type="primary"):
         # Render Visualizations
         fig2d, fig3d, bokeh_plot = generate_visualizations(df, ticker_name)
         
-        st.markdown("### Interactive Price Chart")
-        import streamlit.components.v1 as components
-        try:
-             with open(f"visualizations/{ticker_name}_interactive.html", 'r', encoding='utf-8') as f:
-                 components.html(f.read(), height=450)
-        except Exception as e:
-             st.error(f"Could not load Bokeh chart: {e}")
+        st.markdown("### Model Visualizations")
+        tab1, tab2, tab3 = st.tabs(["📈 Interactive Price Chart", "📊 Moving Average Trend", "🧊 3D Feature Analysis"])
         
-        st.markdown("### Feature Trends")
-        c1, c2 = st.columns(2)
-        with c1:
-             st.pyplot(fig2d)
-        with c2:
-             st.pyplot(fig3d)
+        with tab1:
+            import streamlit.components.v1 as components
+            try:
+                 with open(f"visualizations/{ticker_name}_interactive.html", 'r', encoding='utf-8') as f:
+                     components.html(f.read(), height=450)
+            except Exception as e:
+                 st.error(f"Could not load Bokeh chart: {e}")
+                 
+        with tab2:
+            st.pyplot(fig2d)
+            
+        with tab3:
+            st.pyplot(fig3d)
