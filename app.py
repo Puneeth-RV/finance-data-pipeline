@@ -66,28 +66,27 @@ st.divider()
 st.subheader("Machine Learning Predictions")
 st.write("Predicting if the stock will close HIGHER tomorrow using a Random Forest Classifier.")
 
-if st.button(f"Run Model on {selected_ticker}", type="primary"):
-    with st.spinner('Training model and generating plots...'):
-        df, ticker_name, acc = run_ml_pipeline(selected_ticker)
+with st.spinner(f'Training model and generating plots for {selected_ticker}...'):
+    df, ticker_name, acc = run_ml_pipeline(selected_ticker)
+    
+    st.success(f"Model trained successfully! Accuracy: **{acc * 100:.2f}%**")
+    
+    # Render Visualizations
+    fig2d, fig3d, bokeh_plot = generate_visualizations(df, ticker_name)
+    
+    st.markdown("### Model Visualizations")
+    tab1, tab2, tab3 = st.tabs(["Interactive Price Chart", "Moving Average Trend", "3D Feature Analysis"])
+    
+    with tab1:
+        import streamlit.components.v1 as components
+        try:
+             with open(f"visualizations/{ticker_name}_interactive.html", 'r', encoding='utf-8') as f:
+                 components.html(f.read(), height=550)
+        except Exception as e:
+             st.error(f"Could not load Bokeh chart: {e}")
+             
+    with tab2:
+        st.pyplot(fig2d, use_container_width=True)
         
-        st.success(f"Model trained successfully! Accuracy: **{acc * 100:.2f}%**")
-        
-        # Render Visualizations
-        fig2d, fig3d, bokeh_plot = generate_visualizations(df, ticker_name)
-        
-        st.markdown("### Model Visualizations")
-        tab1, tab2, tab3 = st.tabs(["Interactive Price Chart", "Moving Average Trend", "3D Feature Analysis"])
-        
-        with tab1:
-            import streamlit.components.v1 as components
-            try:
-                 with open(f"visualizations/{ticker_name}_interactive.html", 'r', encoding='utf-8') as f:
-                     components.html(f.read(), height=550)
-            except Exception as e:
-                 st.error(f"Could not load Bokeh chart: {e}")
-                 
-        with tab2:
-            st.pyplot(fig2d, use_container_width=True)
-            
-        with tab3:
-            st.pyplot(fig3d, use_container_width=True)
+    with tab3:
+        st.pyplot(fig3d, use_container_width=True)
