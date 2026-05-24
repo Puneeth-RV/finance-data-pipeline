@@ -82,12 +82,12 @@ if st.button(f"Run Model on {selected_ticker}", type="primary"):
             import streamlit.components.v1 as components
             try:
                  with open(f"visualizations/{ticker_name}_interactive.html", 'r', encoding='utf-8') as f:
-                     components.html(f.read(), height=450)
+                     components.html(f.read(), height=550)
             except Exception as e:
                  st.error(f"Could not load Bokeh chart: {e}")
                  
         with tab2:
-            st.pyplot(fig2d)
+            st.pyplot(fig2d, use_container_width=True)
             
         with tab3:
-            st.pyplot(fig3d)
+            st.pyplot(fig3d, use_container_width=True)

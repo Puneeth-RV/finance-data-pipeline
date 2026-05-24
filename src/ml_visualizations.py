@@ -66,7 +66,7 @@ def generate_visualizations(df, ticker_name):
     os.makedirs("visualizations", exist_ok=True)
     
     # 1. 2D Matplotlib Plot (Price and Moving Averages)
-    fig2d = plt.figure(figsize=(10, 6))
+    fig2d = plt.figure(figsize=(12, 6))
     plt.plot(df['Date'], df['Close'], label='Close Price')
     plt.plot(df['Date'], df['MA_50'], label='50-Day MA')
     plt.title(f"{ticker_name} Price Trend")
@@ -76,7 +76,7 @@ def generate_visualizations(df, ticker_name):
     plt.savefig(f"visualizations/{ticker_name}_2D_plot.png")
     
     # 2. 3D Matplotlib Plot
-    fig3d = plt.figure(figsize=(10, 8))
+    fig3d = plt.figure(figsize=(12, 6))
     ax = fig3d.add_subplot(111, projection='3d')
     sc = ax.scatter(df['Daily_Return'], df['Volatility_10'], df['Volume'], c=df['Target'], cmap='coolwarm', alpha=0.6)
     ax.set_xlabel('Daily Return')
@@ -94,7 +94,7 @@ def generate_visualizations(df, ticker_name):
     source = ColumnDataSource(df_bokeh)
     
     p = figure(x_axis_type="datetime", title=f"Interactive {ticker_name} Chart",
-               width=800, height=400)
+               sizing_mode="stretch_width", height=500)
     
     p.line(x='Date', y='Close', source=source, color="blue", legend_label="Close Price")
     
