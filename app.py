@@ -27,7 +27,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("📈 Finance Data Pipeline & Analysis")
+st.title("Finance Data Pipeline & Analysis")
 st.write("An end-to-end data processing, machine learning, and visualization dashboard.")
 
 # Sidebar
@@ -76,7 +76,7 @@ if st.button(f"Run Model on {selected_ticker}", type="primary"):
         fig2d, fig3d, bokeh_plot = generate_visualizations(df, ticker_name)
         
         st.markdown("### Model Visualizations")
-        tab1, tab2, tab3 = st.tabs(["📈 Interactive Price Chart", "📊 Moving Average Trend", "🧊 3D Feature Analysis"])
+        tab1, tab2, tab3 = st.tabs(["Interactive Price Chart", "Moving Average Trend", "3D Feature Analysis"])
         
         with tab1:
             import streamlit.components.v1 as components
